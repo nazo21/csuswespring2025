@@ -22,3 +22,12 @@
     text-align: center;
   }
   
+  body {
+    background-color: #90f6a6; /* Light blue */
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  
