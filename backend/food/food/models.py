@@ -11,17 +11,11 @@ class User(models.Model):
         return self.name
 
 
-class Food(models.Model):
-    name = models.CharField(max_length=100)
-    price = models.DecimalField
+class SavedItem(models.Model):
+    Listname = models.CharField(max_length=255)
+    query = models.CharField(max_length=255)
+    price = models.FloatField(null=True, blank=True)
+    added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
-
-
-class FoodItem(models.Model):
-    name = models.CharField(max_length=100)
-    # items = models.ManyToManyField(Ingredient, related_name='food_items')
-
-    def __str__(self):
-        return self.name
+        return f"{self.query} - ${self.price}"

@@ -16,13 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import path
-from .views import KrogerFoodView
+from .views import KrogerFoodView, search_items, home_page, add_item, get_items, delete_item
 # from .views import KrogerFood
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('products/', KrogerFoodView, name='kroger-products'),
+    # path('admin/', admin.site.urls),
+    path('', home_page, name='home'),
+    # path('products/', KrogerFoodView, name='kroger-products'),
+
+    path('generate-items/', search_items, name='search_items'),
     # path('get-access-token/', views.KrogerFood, name='KrogerFood'),
+    path("add-item/", add_item),
+    path("get-items/", get_items),
+    path("delete-item/<int:item_id>/", delete_item),
+
 
 
 
