@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gutly - Smart Grocery Assistant</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --primary-light: #A5D6A7;
+            --secondary: #FFC107;
+            --text: #212121;
+            --background: #F5F5F5;
+            --white: #FFFFFF;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--background);
+            color: var(--text);
+        }
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .hamburger {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 3fr 2fr;
+            }
+        }
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--primary-light);
+            padding-bottom: 0.5rem;
+        }
+        .prompt-section {
+            display: flex;
+            flex-direction: column;
+        }
+        .prompt-input {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .prompt-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+        .prompt-input button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 0 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .prompt-input button:hover {
+            background-color: var(--primary-dark);
+        }
+        .budget-section {
+            margin-top: 1rem;
+        }
+        .budget-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .budget-input label {
+            margin-right: 1rem;
+        }
+        .budget-input input {
+            width: 100px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .dietary-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .filter-tag {
+            background-color: var(--primary-light);
+            color: var(--text);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .filter-tag span {
+            margin-left: 0.3rem;
+            cursor: pointer;
+        }
+        .food-list {
+            list-style-type: none;
+        }
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .food-item:last-child {
+            border-bottom: none;
+        }
+        .food-item .item-name {
+            flex: 1;
+        }
+        .food-item .item-price {
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        .food-item .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .button.secondary {
+            background-color: var(--secondary);
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+        .total-section {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-top: 1rem;
+            border-top: 1px solid var(--primary-light);
+            padding-top: 1rem;
+        }
+        .saved-lists {
+            margin-top: 1rem;
+        }
+        .saved-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .saved-list-item:hover {
+            background-color: #f9f9f9;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .status.within-budget {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+        }
+        .status.over-budget {
+            background-color: #FFCDD2;
+            color: #C62828;
+        }
+        .scanner-section {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        #scanner-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: var(--white);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 500px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .modal-header h3 {
+            color: var(--primary-dark);
+        }
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: var(--text);
+        }
+        .modal-body {
+            margin-bottom: 1rem;
+        }
+        .modal-body input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+       
+        <div class="logo">Gutly</div>
+       
+    </header>
+    <main>
+        <div class="container">
+            <!-- Left Column -->
+            <div>
+                <div class="card prompt-section">
+                    <h2>Kroger Food Generator</h2>
+                    <div class="prompt-input">
+                        <input type="text" id="prompt" placeholder="Search for Groceries(e.g: Non-Diary items)">
+                        <button id="generate-btn">Generate</button>
+                    </div>
+
+                    <div class="budget-input">
+                        <label for="budget">Budget:</label>
+                        <input type="number" id="budget" value="50">
+                    </div>
+        
+                </div>
+                <div class="card">
+                    <h2>Groceries' List</h2>
+                    <ul id="generated-list"></ul>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div>
+                <div class="card">
+                    <h2>My Shopping List</h2>
+                    <ul class="food-list" id="shopping-list">
+                        <li class="food-item">
+                            <div class="item-name">Organic Eggs (12 count)</div>
+                            <div class="item-price">$4.99</div>
+                            <div class="item-actions">
+                                <button class="button remove-item-btn">Remove</button>
+                            </div>
+                        </li>
+                        <li class="food-item">
+                            <div class="item-name">Avocados (3 count)</div>
+                            <div class="item-price">$4.50</div>
+                            <div class="item-actions">
+                                <button class="button remove-item-btn">Remove</button>
+                            </div>
+                        </li>
+                        <li class="food-item">
+                            <div class="item-name">Quinoa (1 lb)</div>
+                            <div class="item-price">$5.49</div>
+                            <div class="item-actions">
+                                <button class="button remove-item-btn">Remove</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="total-section">
+                        <div>Total:</div>
+                        <div id="total-amount">$14.98</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                        <div class="status within-budget">Within Budget</div>
+                        <button class="button secondary" id="save-list-btn">Save List</button>
+                    </div>
+                </div>
+                <div class="card saved-lists">
+                    <h2>Saved Lists</h2>
+                    <div id="saved-lists-container">
+                        <div class="saved-list-item">
+                            <div>Weekly Groceries</div>
+                            <div>$45.67</div>
+                        </div>
+                        <div class="saved-list-item">
+                            <div>Party Supplies</div>
+                            <div>$32.50</div>
+                        </div>
+                        <div class="saved-list-item">
+                            <div>Healthy Breakfast</div>
+                            <div>$21.75</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Save List Modal -->
+    <div id="save-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Shopping List</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <label for="list-name">Enter a name for your list:</label>
+                <input type="text" id="list-name" placeholder="e.g., Weekly Groceries">
+            </div>
+            <div class="modal-footer">
+                <button class="button" id="cancel-save">Cancel</button>
+                <button class="button secondary" id="confirm-save">Save</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+
+        const API_ENDPOINTS = {
+            GENERATE_FOOD: 'http://127.0.0.1:8000/generate-items/',
+            SCAN_BARCODE: '/api/scan-barcode',
+            SAVE_LIST: '/api/save-list',
+            GET_SAVED_LISTS: '/api/saved-lists',
+            UPDATE_BUDGET: '/api/update-budget',
+            GET_PRODUCT: '/api/product'
+        };
+        // Store for shopping list items
+        let shoppingListItems = [
+            { name: 'Organic Eggs (12 count)', price: 4.99 },
+            { name: 'Avocados (3 count)', price: 4.50 },
+            { name: 'Quinoa (1 lb)', price: 5.49 }
+        ];
+        // Store for saved lists
+        let savedLists = [
+            { name: 'Weekly Groceries', total: 45.67 },
+            { name: 'Party Supplies', total: 32.50 },
+            { name: 'Healthy Breakfast', total: 21.75 }
+        ];
+        // DOM Elements
+        const currentListEl = document.getElementById('current-list');
+        const shoppingListEl = document.getElementById('shopping-list');
+        const totalAmountEl = document.getElementById('total-amount');
+        const savedListsContainerEl = document.getElementById('saved-lists-container');
+        const budgetInputEl = document.getElementById('budget');
+        const saveListBtn = document.getElementById('save-list-btn');
+        const saveListModal = document.getElementById('save-list-modal');
+        const closeModalBtn = document.querySelector('.close');
+        const cancelSaveBtn = document.getElementById('cancel-save');
+        const confirmSaveBtn = document.getElementById('confirm-save');
+        const listNameInput = document.getElementById('list-name');
+        // Initialize event listeners
+        function initEventListeners() {
+            // Add item buttons
+            document.querySelectorAll('.add-item-btn').forEach(btn => {
+                btn.addEventListener('click', handleAddItem);
+            });
+            // Remove item buttons
+            document.querySelectorAll('.remove-item-btn').forEach(btn => {
+                btn.addEventListener('click', handleRemoveItem);
+            });
+            // Save list button
+            saveListBtn.addEventListener('click', openSaveListModal);
+            // Modal close button
+            closeModalBtn.addEventListener('click', closeSaveListModal);
+            // Cancel save button
+            cancelSaveBtn.addEventListener('click', closeSaveListModal);
+            // Confirm save button
+            confirmSaveBtn.addEventListener('click', saveShoppingList);
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === saveListModal) {
+                    closeSaveListModal();
+                }
+            });
+            // Budget input change
+            budgetInputEl.addEventListener('change', updateBudgetStatus);
+        }
+        // Handle adding item to shopping list
+        function handleAddItem(event) {
+            const itemEl = event.target.closest('.food-item');
+            const nameEl = itemEl.querySelector('.item-name');
+            const priceEl = itemEl.querySelector('.item-price');
+            // Extract item details
+            const name = nameEl.textContent;
+            const priceText = priceEl.textContent;
+            const price = parseFloat(priceText.replace('$', ''));
+            fetch("/add-item/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: name, price: price })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Item added:", data);
+        fetchShoppingList();  // refresh list
+    });
+}
+        // Handle removing item from shopping list
+        function handleRemoveItem(event) {
+            const itemEl = event.target.closest('.food-item');
+            /*const index = Array.from(itemEl.parentNode.children).indexOf(itemEl);
+            // Remove from shopping list array
+            shoppingListItems.splice(index, 1);
+            // Update UI
+            renderShoppingList();
+            updateTotal();
+            updateBudgetStatus();*/
+            fetch(`/delete-item/${itemId}/`, {
+                  method: "DELETE"
+          })
+           .then(response => response.json())
+           .then(data => {
+                console.log("Item deleted:", data);
+            fetchShoppingList(); // Refresh UI
+    })
+    .catch(error => console.error("Error deleting item:", error));
+        }
+        // Add item to shopping list array
+        function addToShoppingList(name, price) {
+            // Check if item already exists
+            const existingItem = shoppingListItems.find(item => item.name === name);
+            if (!existingItem) {
+                shoppingListItems.push({ name, price });
+            }
+        }
+        function fetchShoppingList() {
+                 fetch("/get-items/")
+                .then(res => res.json())
+                .then(data => {
+                      shoppingList = data.items;
+            
+            renderShoppingList();
+            updateTotal();
+            updateBudgetStatus();
+        });
+}
+        // Render shopping list UI
+        function renderShoppingList() {
+            shoppingListEl.innerHTML = '';
+            shoppingListItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'food-item';
+                li.innerHTML = `
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-price">$${item.price.toFixed(2)}</div>
+                    <div class="item-actions">
+                        <button class="button remove-item-btn">Remove</button>
+                    </div>
+                `;
+                // Add event listener to the new remove button
+                const removeBtn = li.querySelector('.remove-item-btn');
+                removeBtn.addEventListener('click', handleRemoveItem);
+                shoppingListEl.appendChild(li);
+            });
+        }
+        // Update total amount
+        function updateTotal() {
+            const total = shoppingListItems.reduce((sum, item) => sum + item.price, 0);
+            totalAmountEl.textContent = `$${total.toFixed(2)}`;
+        }
+        // Update budget status
+        function updateBudgetStatus() {
+            const budget = parseFloat(budgetInputEl.value);
+            const totalText = totalAmountEl.textContent;
+            const total = parseFloat(totalText.replace('$', ''));
+            const statusElement = document.querySelector('.status');
+            if (total <= budget) {
+                statusElement.className = 'status within-budget';
+                statusElement.textContent = 'Within Budget';
+            } else {
+                statusElement.className = 'status over-budget';
+                statusElement.textContent = 'Over Budget';
+            }
+        }
+        // Open save list modal
+        function openSaveListModal() {
+            saveListModal.style.display = 'block';
+            listNameInput.focus();
+        }
+        // Close save list modal
+        function closeSaveListModal() {
+            saveListModal.style.display = 'none';
+            listNameInput.value = '';
+        }
+        // Save shopping list
+        function saveShoppingList() {
+            const listName = listNameInput.value.trim();
+            if (!listName) {
+                alert('Please enter a name for your list');
+                return;
+            }
+            const totalText = totalAmountEl.textContent;
+            const total = parseFloat(totalText.replace('$', ''));
+            // Add to saved lists
+            const newList = { name: listName, total: total };
+            savedLists.push(newList);
+            // In a real app, send to backend API
+            console.log('Saving list to backend:', newList);
+            // Example API call
+            fetch(API_ENDPOINTS.SAVE_LIST, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: listName,
+                    items: shoppingListItems,
+                    total: total
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('List saved successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error saving list:', error);
+            });
+            // Update UI
+            renderSavedLists();
+            // Close modal
+            closeSaveListModal();
+        }
+        // Render saved lists
+        function renderSavedLists() {
+            savedListsContainerEl.innerHTML = '';
+            savedLists.forEach(list => {
+                const div = document.createElement('div');
+                div.className = 'saved-list-item';
+                div.innerHTML = `
+                    <div>${list.name}</div>
+                    <div>$${list.total.toFixed(2)}</div>
+                `;
+                // Add click event to load saved list
+                div.addEventListener('click', () => {
+                    alert(`Loading list: ${list.name}`);
+                    // In a real app, you would fetch the list items from the backend
+                });
+                savedListsContainerEl.appendChild(div);
+            });
+        }
+        // Sample function to connect to backend - Generate food items based on prompt
+    document.getElementById('generate-btn').addEventListener('click', function () {
+        //console.log("Button clicked ✅");
+      const promptInput = document.getElementById('prompt').value;
+       const budget = document.getElementById('budget').value;
+       const listEl = document.getElementById('generated-list');
+
+    fetch(`http://127.0.0.1:8000/generate-items/?query=${encodeURIComponent(promptInput)}&budget=${encodeURIComponent(budget)}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("DATA RECEIVED:", data);
+            listEl.innerHTML = '';
+
+            if (!data.items || data.items.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'No items found.';
+                listEl.appendChild(li);
+                return;
+            }
+
+            // Call the reusable function here
+            updateGeneratedResults(data.items, listEl);
+        })
+        .catch(error => {
+            console.error('Error fetching items:', error);
+            listEl.innerHTML = '<li>Error fetching data.</li>';
+        });
+});
+
+
+function updateGeneratedResults(results, container) {
+    container.innerHTML = '';
+    results.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'food-item';
+        li.innerHTML = `
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">$${parseFloat(item.price).toFixed(2)}</div>
+            <div class="item-actions">
+                <button class="button add-item-btn">Add</button>
+            </div>
+        `;
+        // Add event listener to the new add button
+        const addBtn = li.querySelector('.add-item-btn');
+        addBtn.addEventListener('click', () => handleAddItem(item));
+        container.appendChild(li);
+    });
+}
+
+// Dummy add item handler
+function handleAddItem(item) {
+    console.log("Added item:", item);
+    alert(`Added: ${item.name}`);
+}
+
+        
+
+        // Initialize the app
+        function init() {
+            renderShoppingList();
+            renderSavedLists();
+            updateTotal();
+            updateBudgetStatus();
+            initEventListeners();
+        }
+        // Call init on page load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
