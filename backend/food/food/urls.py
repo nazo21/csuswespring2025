@@ -16,12 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import path
-from .views import KrogerFoodView, search_items, home_page, add_item, get_items, delete_item
+from .views import KrogerFoodView, search_items, save_list, get_saved_lists, delete_list, home_page, add_item, get_items, delete_item
 # from .views import KrogerFood
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     path('', home_page, name='home'),
+    path('home/', home_page, name='home'),
+    path('save-list/', save_list, name='save_list'),
+    path('saved-lists/', get_saved_lists, name='saved_lists'),
+    path('delete-list/<int:list_id>/', delete_list, name='delete_list'),
     # path('products/', KrogerFoodView, name='kroger-products'),
 
     path('generate-items/', search_items, name='search_items'),
@@ -29,6 +32,8 @@ urlpatterns = [
     path("add-item/", add_item),
     path("get-items/", get_items),
     path("delete-item/<int:item_id>/", delete_item),
+
+
 
 
 
